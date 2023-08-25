@@ -24,13 +24,13 @@ class RequestHelper {
 
   static Future<http.Response> get(String endpoint) async {
     String url = endpoint;
-    print(url);
     String? authToken = await getAuthToken();
-
+    print(authToken);
+    print(url);
     if (authToken != null) {
       // Authenticated request with header
-      var response = await http
-          .get(Uri.parse(url), headers: {"Authorization": "Token $authToken"});
+      var response =
+          await http.get(Uri.parse(url), headers: {"Authorization": authToken});
       return response;
     } else {
       var response = await http.get(Uri.parse(url));
@@ -50,7 +50,7 @@ class RequestHelper {
       String? authToken = await getAuthToken();
       if (authToken != null) {
         // authenticated request with header
-        headers["Authorization"] = "Token $authToken";
+        headers["Authorization"] = authToken;
 
         return http.post(Uri.parse(url),
             headers: headers, body: jsonEncode(data));
@@ -71,9 +71,8 @@ class RequestHelper {
     if (authToken != null) {
       // authenticated request with header
       return http.patch(Uri.parse(url),
-          headers: {"Authorization": "Token $authToken"}, body: data);
+          headers: {"Authorization": authToken}, body: data);
     } else {
-      // unauthenticated request without header
       return http.put(Uri.parse(url), body: json.encode(data));
     }
   }
@@ -88,7 +87,7 @@ class RequestHelper {
 
     // Create a multipart file from the XFile
     var multipartFile = await http.MultipartFile.fromPath(
-      'profile_pic',
+      'pic_image',
       file.path,
     );
 
@@ -97,7 +96,7 @@ class RequestHelper {
 
     if (authToken != null) {
       // Add authorization header
-      request.headers['Authorization'] = 'Token $authToken';
+      request.headers['Authorization'] = authToken;
     }
 
     // Send the request and receive the response
@@ -114,7 +113,7 @@ class RequestHelper {
       // authenticated request with header
 
       return http.delete(Uri.parse(url),
-          headers: {"Authorization": "Token $authToken"}, body: data);
+          headers: {"Authorization": authToken}, body: data);
     } else {
       // unauthenticated request without header
       return http.delete(Uri.parse(url), body: data);

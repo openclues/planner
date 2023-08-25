@@ -18,20 +18,25 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-final _registerKey = GlobalKey<FormState>();
-
 class _RegisterScreenState extends State<RegisterScreen> {
   bool isValid = false;
   bool _obscureText = true;
   String? _email;
   String? _password;
   bool? _rememberMe = false;
+  late GlobalKey<FormState> _registerKey;
   bool _validateEmail(String? v) {
     final bool emailValid = RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(v!);
 
     return emailValid;
+  }
+
+  @override
+  void initState() {
+    _registerKey = GlobalKey<FormState>();
+    super.initState();
   }
 
   @override
@@ -49,8 +54,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
           if (state is RegisterSuccess) {
             MessageHelper.hideLoading(context);
-
-            MessageHelper.showSuccess(context, "Your account was created");
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              'login',
+              (route) => false,
+            );
+            MessageHelper.showSuccess(context,
+                "Your account was created \nWe have send you a link on your email to activate your account");
           }
         },
         child: SingleChildScrollView(
@@ -82,49 +91,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               TextStyle(color: Theme.of(context).primaryColor),
                         ),
                         SizeSettings.smalPaddingHeightWidgetMulti(3),
-                        AuthTextFieldWidget(
-                          prefix: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              IconlyLight.message,
-                              size: 30,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                          hintText: "Email Address",
-                          suffix: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              FontAwesomeIcons.check,
-                              color: isValid == true
-                                  ? Colors.green
-                                  : Colors.black12,
-                            ),
-                          ),
-                          onChanged: (v) {
-                            if (_validateEmail(v)) {
+                        EmailField(
+                            validator: (v) {
+                              if (!_validateEmail(v)) {
+                                return "Enter a valid Email";
+                              }
+                            },
+                            onSaved: (v) {
                               setState(() {
-                                isValid = true;
+                                _email = v;
                               });
-                            } else {
-                              setState(() {
-                                isValid = false;
-                              });
-                            }
-                            return null;
-                          },
-                          // key: Key("EmailRegister"),
-                          validator: (v) {
-                            if (!_validateEmail(v)) {
-                              return "Enter a valid Email";
-                            }
-                          },
-                          onSaved: (v) {
-                            setState(() {
-                              _email = v;
-                            });
-                          },
-                        ),
+                            },
+                            isValid: isValid,
+                            onChanged: (v) {
+                              if (_validateEmail(v)) {
+                                setState(() {
+                                  isValid = true;
+                                });
+                              } else {
+                                setState(() {
+                                  isValid = false;
+                                });
+                              }
+                              return null;
+                            }),
                         AuthTextFieldWidget(
                           obscureText: _obscureText,
                           prefix: Padding(
@@ -208,15 +198,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                         ),
                         SizeSettings.smalPaddingHeightWidgetMulti(1),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Do you have an account? "),
-                            Text(
-                              "Sign Up",
-                              style: TextStyle(color: Colors.redAccent),
-                            ),
-                          ],
+                        const AuthFooterWidget(
+                          cta: "Login",
+                          push: "login",
+                          title: "Do you have an account? ",
                         )
                       ],
                     ),
@@ -228,6 +213,77 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+}
+
+class AuthFooterWidget extends StatelessWidget {
+  final String title;
+  final String cta;
+  final String push;
+  const AuthFooterWidget({
+    super.key,
+    required this.title,
+    required this.cta,
+    required this.push,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(title),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushNamed(push);
+          },
+          child: Text(
+            cta,
+            style: const TextStyle(color: Colors.redAccent),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class EmailField extends StatelessWidget {
+  final String? Function(String?)? onChanged;
+  final String? Function(String?)? validator;
+  final String? Function(String?)? onSaved;
+  const EmailField({
+    super.key,
+    required this.isValid,
+    this.onChanged,
+    this.validator,
+    this.onSaved,
+  });
+
+  final bool isValid;
+
+  @override
+  Widget build(BuildContext context) {
+    return AuthTextFieldWidget(
+        prefix: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Icon(
+            IconlyLight.message,
+            size: 30,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        hintText: "Email Address",
+        suffix: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Icon(
+            FontAwesomeIcons.check,
+            color: isValid == true ? Colors.green : Colors.black12,
+          ),
+        ),
+        onChanged: onChanged,
+        // key: Key("EmailRegister"),
+        validator: validator,
+        onSaved: onSaved);
   }
 }
 
@@ -243,8 +299,7 @@ class AuthScreenHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: SizeSettings.screenHeight! * 0.5,
-      width: SizeSettings.screenWidth,
+      height: SizeSettings.screenHeight! * 0.4, width: SizeSettings.screenWidth,
       decoration: BoxDecoration(
           color: Theme.of(context).primaryColor.withOpacity(1),
           borderRadius: BorderRadius.circular(15)),
@@ -255,12 +310,12 @@ class AuthScreenHeader extends StatelessWidget {
               height: SizeSettings.screenHeight! * 0.4,
               // width: SizeSettings.screenWidth,
               child: Image.asset('assets/pla.png')),
-          const Expanded(
-            child: Text(
-              "Planner",
-              style: TextStyle(color: Colors.white, fontSize: 50),
-            ),
-          )
+          // const Expanded(
+          //   child: Text(
+          //     "Planner",
+          //     style: TextStyle(color: Colors.white, fontSize: 50),
+          //   ),
+          // )
         ],
       ), // Use primary color of the theme
     );

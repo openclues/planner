@@ -15,6 +15,10 @@ class Task {
   String? repeated;
   List<Comment>? comments;
   bool? isDone;
+
+  static fromMap(x) {}
+
+  toMap() {}
 }
 
 class Comment {
@@ -23,43 +27,43 @@ class Comment {
 }
 
 class Category {
-  int? id;
-  List<Task>? tasks;
-  String? icon;
-  String? name;
-  List<Note>? notes;
-  List<Subcategory>? subcategories; // List of Subcategory objects
+  // int? id;
+  // List<Task>? tasks;
+  // String? icon;
+  String? title;
+  // List<Note>? notes;
+  // List<Subcategory>? subcategories; // List of Subcategory objects
 
   Category({
-    this.id,
-    this.icon,
-    this.name,
-    this.notes,
-    this.subcategories,
+    // this.id,
+    // this.icon,
+    this.title,
+    // this.notes,
+    // this.subcategories,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'icon': icon,
-      'name': name,
-      'notes': notes?.map((x) => x?.toMap())?.toList(),
-      'subcategories': subcategories?.map((x) => x?.toMap())?.toList(),
+      // 'id': id,
+      // 'icon': icon,
+      'name': title,
+      // 'notes': notes?.map((x) => x?.toMap())?.toList(),
+      // 'subcategories': subcategories?.map((x) => x?.toMap())?.toList(),
     };
   }
 
   factory Category.fromMap(Map<String, dynamic> map) {
     return Category(
-      id: map['id']?.toInt(),
-      icon: map['icon'],
-      name: map['name'],
-      notes: map['notes'] != null
-          ? List<Note>.from(map['notes']?.map((x) => Note.fromMap(x)))
-          : null,
-      subcategories: map['subcategories'] != null
-          ? List<Subcategory>.from(
-              map['subcategories']?.map((x) => Subcategory.fromMap(x)))
-          : null,
+      // id: map['id']?.toInt(),
+      // icon: map['icon'],
+      title: map['title'],
+      // notes: map['notes'] != null
+      //     ? List<Note>.from(map['notes']?.map((x) => Note.fromMap(x)))
+      //     : null,
+      // subcategories: map['subcategories'] != null
+      //     ? List<Subcategory>.from(
+      //         map['subcategories']?.map((x) => Subcategory.fromMap(x)))
+      //     : null,
     );
   }
 
