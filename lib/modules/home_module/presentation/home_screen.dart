@@ -23,10 +23,6 @@ class HomeScreen extends StatelessWidget {
               if (state is LoadingUserLoggedInState) {
                 return ListView(
                   children: [
-                    // SizedBox(
-                    //   height: SizeSettings.screenHeight! * 0.3,
-                    //   child: BubblePage(),
-                    // ),
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
