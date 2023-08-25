@@ -28,15 +28,29 @@ class HomeScreen extends StatelessWidget {
                       shrinkWrap: true,
                       itemCount: state.user.categories!.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Text(
-                            state.user.categories![index].title!.toString());
+                        return Column(
+                          children: [
+                            // Text(state.user.categories![index].title!
+                            //     .toString()),
+                            ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount:
+                                  state.user.categories![index].tasks!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Text(state.user.categories![index]
+                                    .tasks![index].title!);
+                              },
+                            ),
+                          ],
+                        );
                       },
                     ),
                     // Text((state).user.)
                   ],
                 );
               } else {
-                return Center(
+                return const Center(
                   child: Text("Something Went Wrong"),
                 );
               }

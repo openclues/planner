@@ -5,18 +5,20 @@ import 'package:planner/modules/user_module/data/user_model.dart';
 
 class Task {
   String? title;
-  int? durationseconds;
-  List<Note>? taskNotes;
-  List<int>? sharedWith;
-  List<int>? editableWith;
-  int? owner;
-  bool? withNotification;
-  DateTime? selectedDay;
-  String? repeated;
-  List<Comment>? comments;
-  bool? isDone;
+  // int? durationseconds;
+  // List<Note>? taskNotes;
+  // List<int>? sharedWith;
+  // List<int>? editableWith;
+  // int? owner;
+  // bool? withNotification;
+  // DateTime? selectedDay;
+  // String? repeated;
+  // List<Comment>? comments;
+  // bool? isDone;
 
-  static fromMap(x) {}
+  Task.fromJason(Map<String, dynamic> json) {
+    title = json["title"];
+  }
 
   toMap() {}
 }
@@ -28,7 +30,7 @@ class Comment {
 
 class Category {
   // int? id;
-  // List<Task>? tasks;
+  List<Task>? tasks = [];
   // String? icon;
   String? title;
   // List<Note>? notes;
@@ -47,24 +49,29 @@ class Category {
       // 'id': id,
       // 'icon': icon,
       'name': title,
+
       // 'notes': notes?.map((x) => x?.toMap())?.toList(),
       // 'subcategories': subcategories?.map((x) => x?.toMap())?.toList(),
     };
   }
 
-  factory Category.fromMap(Map<String, dynamic> map) {
-    return Category(
-      // id: map['id']?.toInt(),
-      // icon: map['icon'],
-      title: map['title'],
-      // notes: map['notes'] != null
-      //     ? List<Note>.from(map['notes']?.map((x) => Note.fromMap(x)))
-      //     : null,
-      // subcategories: map['subcategories'] != null
-      //     ? List<Subcategory>.from(
-      //         map['subcategories']?.map((x) => Subcategory.fromMap(x)))
-      //     : null,
-    );
+  Category.fromMap(Map<String, dynamic> map) {
+    // id: map['id']?.toInt(),
+    // icon: map['icon'],
+    if (map['tasks'] != null) {
+      for (var t in map['tasks']) {
+        tasks!.add(Task.fromJason(t));
+      }
+    }
+    title = map['title'];
+
+    // notes: map['notes'] != null
+    //     ? List<Note>.from(map['notes']?.map((x) => Note.fromMap(x)))
+    //     : null,
+    // subcategories: map['subcategories'] != null
+    //     ? List<Subcategory>.from(
+    //         map['subcategories']?.map((x) => Subcategory.fromMap(x)))
+    //     : null,
   }
 
   String toJson() => json.encode(toMap());
