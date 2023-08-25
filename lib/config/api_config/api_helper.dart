@@ -1,14 +1,12 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:planner/config/storage/local_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../auth_token_handler.dart';
 import 'api_endpoints.dart';
 
 class RequestHelper {
-  static const String _baseUrl = ApiEndpoints.baseUrl;
   static String? _token;
 
   static setAuthTokenToNull() {
@@ -25,7 +23,7 @@ class RequestHelper {
   }
 
   static Future<http.Response> get(String endpoint) async {
-    String url = _baseUrl + endpoint;
+    String url = endpoint;
     print(url);
     String? authToken = await getAuthToken();
 
@@ -43,7 +41,7 @@ class RequestHelper {
 
   static Future<http.Response> post(String endpoint, Map<String, dynamic> data,
       {bool? signup}) async {
-    String url = _baseUrl + endpoint;
+    String url = endpoint;
 
     Map<String, String> headers = {"Content-Type": "application/json"};
     if (signup == true) {
@@ -66,7 +64,7 @@ class RequestHelper {
   }
 
   static Future<http.Response> put(String endpoint, dynamic data) async {
-    String url = _baseUrl + endpoint;
+    String url = endpoint;
 
     String? authToken = await getAuthToken();
 
@@ -81,7 +79,7 @@ class RequestHelper {
   }
 
   static Future<http.Response> putMultipart(String endpoint, XFile file) async {
-    String url = _baseUrl + endpoint;
+    String url = endpoint;
     String? authToken = await getAuthToken();
 
     var request = http.MultipartRequest('PUT', Uri.parse(url));
@@ -109,7 +107,7 @@ class RequestHelper {
   }
 
   static Future<http.Response> delete(String endpoint, dynamic data) async {
-    String url = _baseUrl + endpoint;
+    String url = endpoint;
     String? authToken = await getAuthToken();
 
     if (authToken != null) {

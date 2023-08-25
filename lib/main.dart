@@ -28,18 +28,6 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode
           .system, // Automatically use light/dark based on system settings
-      home: const HomePage(),
     );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    SizeSettings.init(context);
-
-    return RegisterScreen();
   }
 }

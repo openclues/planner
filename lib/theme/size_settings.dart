@@ -3,6 +3,19 @@ import 'package:flutter/material.dart';
 class SizeSettings {
   static double? screenHeight;
   static double? screenWidth;
+  static Widget smalPaddingHeightWidget = SizedBox(
+    height: SizeSettings.heightMultiplier,
+  );
+  static Widget smalPaddingHeightWidgetMulti(double? x) {
+    return SizedBox(
+      height: SizeSettings.heightMultiplier * x!,
+    );
+  }
+
+  static Widget smalPaddingWidthWidget = SizedBox(
+    height: SizeSettings.heightMultiplier,
+  );
+
   static double? topPadding = kTextTabBarHeight;
   static double textMultiplier = 0.0;
   static double imageSizeMultiplier = 0.0;
